@@ -5,19 +5,19 @@
 import cmd
 
 
-class HBNBCmd(cmd.Cmd):
+class HBNBCommand(cmd.Cmd):
     """Console class for interactive shell"""
 
     prompt = "(hbnb) "
 
     def do_EOF(self, arg):
-        """exits the program"""
+        """Exit on Ctrl+D"""
         return True
 
     def do_quit(self, arg):
-        """ exits the shell """
+        """Quit command to exit the program"""
         return True
 
 
 if __name__ == "__main__":
-    HBNBCmd().cmdloop()
+    HBNBCommand().cmdloop()
