@@ -5,12 +5,13 @@
 import cmd
 from models.base_model import BaseModel
 from models import storage
+from models.user import User
 
 
 class HBNBCommand(cmd.Cmd):
     """Console class for interactive shell"""
 
-    classes = {"BaseModel"}
+    classes = {"BaseModel", "User"}
     prompt = "(hbnb) "
     
     def parse_args(self, arg):
@@ -39,7 +40,8 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         else:
             # create a new instance
-            instance = BaseModel()
+            instance = eval(f"{args[0]}.()")
+
             # save a new instcance
             instance.save()
 
