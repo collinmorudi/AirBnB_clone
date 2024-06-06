@@ -18,7 +18,6 @@ class HBNBCmd(cmd.Cmd):
         """ exits the shell """
         return True
 
+
 if __name__ == "__main__":
-
-
     HBNBCmd().cmdloop()
