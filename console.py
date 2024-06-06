@@ -3,12 +3,20 @@
 
 
 import cmd
+from models.base_model import BaseModel
+from models import storage
 
 
 class HBNBCommand(cmd.Cmd):
     """Console class for interactive shell"""
 
+    classes = {"BaseModel"}
     prompt = "(hbnb) "
+    
+    def parse_args(self, arg):
+        """Parse command line arguments"""
+        args = arg.split()  # split on spaces
+        return args
 
     def do_EOF(self, arg):
         """Exit on Ctrl+D"""
@@ -17,6 +25,132 @@ class HBNBCommand(cmd.Cmd):
     def do_quit(self, arg):
         """Quit command to exit the program"""
         return True
+
+    def do_create(self, arg):
+        """
+        Creates a new instance of BaseModel, saves it (to the JSON file)
+        and prints the id
+        """
+        args = self.parse_args(arg)
+
+        if len(args) == 0:
+            print("** class name missing **")
+        elif args[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+        else:
+            # create a new instance
+            instance = BaseModel()
+            # save a new instcance
+            instance.save()
+
+            print(instance.id) 
+
+    def do_show(self, arg):
+        """
+        Prints the string representation of an instance based on the
+        class name and id.
+        """
+        args = self.parse_args(arg)
+
+        if len(args) == 0:
+            print("** class name missing **")
+        elif args[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+        elif len(args) < 2:
+            print("** instance id missing **")
+        else:
+            objects = storage.all()
+            key = f"{args[0]}.{args[1]}"
+            if key in objects:
+                print(objects[key])
+            else:
+                print("** no instance found **")
+
+    def do_destroy(self, arg):
+        """
+        Deletes an instance based on the class name and id (save the
+        change into the JSON file)
+        """
+        args = self.parse_args(arg)
+
+        if len(args) == 0:
+            print("** class name missing **")
+        elif args[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+        elif len(args) < 2:
+            print("** instance id missing **")
+        else:
+            objects = storage.all()
+            key = f"{args[0]}.{args[1]}"
+            
+            # delete the object based on key
+            if key in objects:
+                del objects[key]
+                # save changes
+                storage.save()
+            else:
+                print("** no instance found **")
+
+
+    def do_all(self, arg):
+        """
+        Prints all string representation of all instances based or not
+        on the class name
+        """
+
+        args = self.parse_args(arg)
+        # get all objects
+        objects = storage.all()
+
+        if len(args) == 0:
+            for key, value in objects.items():
+                print(str(value))
+        elif args[0] not in HBNBCommand.classes:
+                print("** class doesn't exist **")
+        else:
+            for key, value in objects.items():
+                if key.split(".")[0] == args[0]:
+                    print(str(value))
+
+
+    def do_update(self, arg):
+        """
+        Updates an instance based on the class name and id by adding or
+        updating attribute (save the change into the JSON file)
+        """
+        args = self.parse_args(arg)
+
+        if len(args) == 0:
+            print("** class name missing **")
+        elif args[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+        elif len(args) < 2:
+            print("** instance id missing **")
+        else:
+            objects = storage.all()
+            key = f"{args[0]}.{args[1]}"
+
+            if key not in objects:
+                print("** no instance found **")
+            elif len(args) < 3:
+                print("** attribute name missing **")
+            elif len(args) < 4:
+                print("** value missing **")
+            else:
+                obj = objects[key]
+
+                attribute_name = args[2]
+                attribute_value = args[3]
+
+                try:
+                    attribute_value = eval(attribute_value)
+                except Exception:
+                    pass
+
+                setattr(obj, attribute_name, attribute_value)
+                obj.save()
+
+
 
 
 if __name__ == "__main__":
