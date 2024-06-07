@@ -17,9 +17,10 @@ import shlex
 class HBNBCommand(cmd.Cmd):
     """Console class for interactive shell"""
 
-    classes = {"BaseModel", "User", "Amenity", "State", "City", "Place", "Review"}
+    classes = {"BaseModel", "User", "Amenity", "State",
+                            "City", "Place", "Review"}
     prompt = "(hbnb) "
-    
+
     def parse_args(self, arg):
         """Parse command line arguments"""
         args = arg.split()  # split on spaces
@@ -51,7 +52,7 @@ class HBNBCommand(cmd.Cmd):
             # save a new instcance
             instance.save()
 
-            print(instance.id) 
+            print(instance.id)
 
     def do_show(self, arg):
         """
@@ -90,7 +91,7 @@ class HBNBCommand(cmd.Cmd):
         else:
             objects = storage.all()
             key = f"{args[0]}.{args[1]}"
-            
+
             # delete the object based on key
             if key in objects:
                 del objects[key]
@@ -98,7 +99,6 @@ class HBNBCommand(cmd.Cmd):
                 storage.save()
             else:
                 print("** no instance found **")
-
 
     def do_all(self, arg):
         """
@@ -115,12 +115,11 @@ class HBNBCommand(cmd.Cmd):
             for key, value in objects.items():
                 print(str(value))
         elif args[0] not in HBNBCommand.classes:
-                print("** class doesn't exist **")
+            print("** class doesn't exist **")
         else:
             for key, value in objects.items():
                 if key.split(".")[0] == args[0]:
                     print(str(value))
-
 
     def do_update(self, arg):
         """
@@ -171,16 +170,18 @@ class HBNBCommand(cmd.Cmd):
                 "update": self.do_update,
                 "count": self.do_count
                 }
-        
+
         # get class name
         args = arg.split(".")
         class_name = args[0]
-        
+
         # get command
         command = args[1].split("(")[0]
+        first_arg = args[1].split("(")
+        object_id = first_arg[1].split(")")[0].strip('"').strip("'")
 
         if command in default_commands.keys():
-            return default_commands[command](f"{class_name} {''}")
+            return default_commands[command](f"{class_name} {object_id}")
 
         print(f"** unknown syntax ** {arg}")
 
@@ -202,6 +203,7 @@ class HBNBCommand(cmd.Cmd):
             print(count)
         else:
             print("** class doens't exist **")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
