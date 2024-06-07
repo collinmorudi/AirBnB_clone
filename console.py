@@ -11,6 +11,7 @@ from models.place import Place
 from models.review import Review
 from models.city import City
 from models.amenity import Amenity
+import shlex
 
 
 class HBNBCommand(cmd.Cmd):
@@ -167,7 +168,8 @@ class HBNBCommand(cmd.Cmd):
                 "all": self.do_all,
                 "show": self.do_show,
                 "destroy": self.do_destroy,
-                "update": self.do_update
+                "update": self.do_update,
+                "count": self.do_count
                 }
         
         # get class name
@@ -182,9 +184,24 @@ class HBNBCommand(cmd.Cmd):
 
         print(f"** unknown syntax ** {arg}")
 
+    def do_count(self, arg):
+        """
+        Count the number of instances of a class passed as arg
+        """
+        objects = storage.all()
 
+        args = shlex.split(arg)
 
+        class_name = args[0]
 
+        if class_name in HBNBCommand.classes:
+            count = 0
+            for obj in objects.values():
+                if obj.__class__.__name__ == class_name:
+                    count += 1
+            print(count)
+        else:
+            print("** class doens't exist **")
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
