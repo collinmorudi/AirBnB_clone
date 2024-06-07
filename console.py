@@ -106,6 +106,7 @@ class HBNBCommand(cmd.Cmd):
         """
 
         args = self.parse_args(arg)
+
         # get all objects
         objects = storage.all()
 
@@ -156,6 +157,31 @@ class HBNBCommand(cmd.Cmd):
 
                 setattr(obj, attribute_name, attribute_value)
                 obj.save()
+
+    def default(self, arg):
+        """
+        default mfunction to handle syntax errors
+        """
+        # default method calls
+        default_commands = {
+                "all": self.do_all,
+                "show": self.do_show,
+                "destroy": self.do_destroy,
+                "update": self.do_update
+                }
+        
+        # get class name
+        args = arg.split(".")
+        class_name = args[0]
+        
+        # get command
+        command = args[1].split("(")[0]
+
+        if command in default_commands.keys():
+            return default_commands[command](f"{class_name} {''}")
+
+        print(f"** unknown syntax ** {arg}")
+
 
 
 
